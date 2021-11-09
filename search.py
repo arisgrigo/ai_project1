@@ -152,7 +152,7 @@ def breadthFirstSearch(problem):
     nodeQueue = util.Queue()  # same as dfs but with Queues instad of Stacks
     pathQueue = util.Queue()
     path = []
-    discovered = set()
+    discovered = []
 
     nodeQueue.push(problem.getStartState())
     pathQueue.push(path)
@@ -161,10 +161,10 @@ def breadthFirstSearch(problem):
         currNode = nodeQueue.pop()
         path = pathQueue.pop()
 
-        if currNode in discovered:
+        if currNode in list(discovered):
             continue
 
-        discovered.add(currNode)
+        discovered.append(currNode)
 
         if problem.isGoalState(currNode):
             return path
@@ -174,6 +174,7 @@ def breadthFirstSearch(problem):
                 nodeQueue.push(successor[0])
                 succPath = path + [successor[1]]
                 pathQueue.push(succPath)
+    return []
 
 def nullHeuristic(state, problem=None):
     """

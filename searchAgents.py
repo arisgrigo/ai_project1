@@ -308,7 +308,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.cornerList = [(1, 1), (1, top), (right, 1), (right, top)] #list containing every corner, used in state
+        self.cornerList = [(1, 1), (1, top), (right, 1), (right, top)]  # list containing every corner, used in state
 
     def getStartState(self):
         """
@@ -317,15 +317,13 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         return self.startingPosition, self.cornerList  # cornerList is used to determine if goal state is met
-        util.raiseNotDefined()
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        return len(state[1]) == 0  # state[1] is the cornerList. if the list is empty, it means every corner has been visited
-        util.raiseNotDefined()
+        return len(state[1]) == 0               #state[1] is the cornerList. if the list is empty, it means every corner has been visited
 
     def expand(self, state):
         """
@@ -343,20 +341,12 @@ class CornersProblem(search.SearchProblem):
             # Add a child state to the child list if the action is legal
             # You should call getActions, getActionCost, and getNextState.
             "*** YOUR CODE HERE ***"
-            corners = state[1][:]
-            x, y = state[0]  # coordinates of current node
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            nextNode = (nextx, nexty)
-            if not self.walls[nextx][nexty]:  # if nextNode is not a wall
-                if nextNode in corners:  # if nextNode is a corner, remove that corner from cornerList
-                    corners.remove(nextNode)
-                nextState = (nextNode, corners)  # update nextState with the next node and an updated corner list (if a new corner was visited)
-                stepCost = 1
-                children.append((nextState, action, stepCost))
+            child = self.getNextState(state, action)
+            stepCost = self.getActionCost(state, action, child)
+            children.append((child, action, stepCost))
 
-            self._expanded += 1 # DO NOT CHANGE
-            return children
+        self._expanded += 1 # DO NOT CHANGE
+        return children
 
     def getActions(self, state):
         possible_directions = [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]
@@ -381,7 +371,14 @@ class CornersProblem(search.SearchProblem):
         dx, dy = Actions.directionToVector(action)
         nextx, nexty = int(x + dx), int(y + dy)
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        corners = list(state[1][:])
+        nextNode = (nextx, nexty)
+        if not self.walls[nextx][nexty]:  # if nextNode is not a wall
+            if nextNode in corners:  # if nextNode is a corner, remove that corner from cornerList
+                corners.remove(nextNode)
+            nextState = (nextNode, tuple(corners))  # update nextState with the next node and an updated corner list (if a new corner was visited)
+
+        return nextState
 
     def getCostOfActionSequence(self, actions):
         """
@@ -547,8 +544,7 @@ def foodHeuristic(state, problem):
 
     # distance is calculated using the mazeDistance function found in the bottom of this file
     for food in foodList:
-        distance = max(distance, mazeDistance(position, food,
-                                              problem.startingGameState))  # keep track of biggest distance to return it
+        distance = max(distance, mazeDistance(position, food, problem.startingGameState))  # keep track of biggest distance to return it
     return distance
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
